@@ -34,7 +34,7 @@ resource "azurerm_storage_account" "StorageAccountDemo" {
 
 
 # ------------------------------------------------------------
-# 1. Creation of Individual Policy Definitions.
+# 1. Creation of Individual Policy Definitions
 # ------------------------------------------------------------
 
 # Find and read the file data into local Variables.
