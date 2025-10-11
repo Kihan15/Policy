@@ -14,13 +14,13 @@ provider "azurerm" {
 
 
 resource "azurerm_resource_group" "demo" {
-  name     = "example-storage-test3"
+  name     = "example-storage-test4"
   location = "West Europe"
 }
 
 ##  Demo of storage account
 resource "azurerm_storage_account" "StorageAccountDemo" {
-  name                     = "satestant2"
+  name                     = "satestant3"
   resource_group_name      = azurerm_resource_group.demo.name
   location                 = azurerm_resource_group.demo.location
   account_tier             = "Standard"
