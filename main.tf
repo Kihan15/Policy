@@ -14,7 +14,7 @@ provider "azurerm" {
 
 
 resource "azurerm_resource_group" "demo" {
-  name     = "example-storage"
+  name     = "example-storage-test"
   location = "West Europe"
 }
 
