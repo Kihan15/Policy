@@ -1,4 +1,4 @@
-resource "azurerm_policy_definition" "custom_policy" {
+resource "azurerm_policy_definition" "def_policies" {
   name         = var.policy_name
   policy_type  = "Custom"
   mode         = var.policy_mode
