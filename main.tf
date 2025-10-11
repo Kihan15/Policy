@@ -39,8 +39,8 @@ resource "azurerm_storage_account" "StorageAccountDemo" {
 
 # Find and read the file data into local Variables.
 locals {
-  policy_files = fileset("./policies/tag", "*.json")
-  raw_data     = [for f in local.policy_files : jsondecode(file("./policies/tag/${f}"))]
+  policy_files = fileset("./policy/tag", "*.json")
+  raw_data     = [for f in local.policy_files : jsondecode(file("./policy/tag/${f}"))]
 }
 
 /*
