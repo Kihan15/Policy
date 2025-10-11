@@ -1,0 +1,126 @@
+name: Terraform Subscription Resource Deployment (OIDC)
+
+# Triggers:
+# 1. On any Pull Request targeting the 'main' branch (for Plan)
+# 2. On merge (push) to the 'main' branch (for Apply)
+# 3. Manual trigger via UI (workflow_dispatch)
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Permissions are the same, needed for OIDC
+permissions:
+  id-token: write 
+  contents: read  
+
+env:
+  TF_WORKING_DIR: 'curent'
+  TF_VERSION: 'latest'
+  
+jobs:
+  # ====================================================
+  # JOB 1: TERRAFORM PLAN (Continuous Integration - Runs on PR)
+  # This job runs for ALL PULL REQUESTS to validate and plan changes.
+  # ====================================================
+  plan:
+    runs-on: ubuntu-latest
+    # Only run the plan job if the trigger is a Pull Request or a manual dispatch
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' 
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # (Authentication steps remain the same)
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: 'd2c5b5b1-d8df-4dbd-ac14-d347e7ab31b0'
+          # auth-type: oidc
+          
+      - name: Setup Terraform CLI
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          
+      - name: Terraform Init
+        id: init
+        run: terraform init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ${{ env.TF_WORKING_DIR }}
+
+      - name: Terraform Plan
+        run: terraform plan -no-color -out=tfplan
+        working-directory: ${{ env.TF_WORKING_DIR }}
+
+      - name: Upload Terraform Plan Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-artifact
+          path: ${{ env.TF_WORKING_DIR }}/tfplan
+          
+      - name: Azure Logout
+        if: always()
+        run: az logout
+
+  # ====================================================
+  # JOB 2: TERRAFORM APPLY (Continuous Deployment - Runs on Push/Merge to main)
+  # This job depends on a successful plan and requires manual approval.
+  # ====================================================
+  apply:
+    runs-on: ubuntu-latest
+    # Only run the apply job if the trigger is a PUSH to main 
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    # Ensures this job runs only AFTER the plan job succeeds
+    # needs: [plan]
+    
+    # 🚨 CRITICAL: This links the job to a protected GitHub Environment
+    #environment: 
+     # name: Production # You will set up protection rules for this name
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # (Authentication steps remain the same)
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: 'd2c5b5b1-d8df-4dbd-ac14-d347e7ab31b0'
+
+      - name: Setup Terraform CLI
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          
+      # Download the plan file saved from the 'plan' job
+      - name: Download Terraform Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan-artifact
+          path: ${{ env.TF_WORKING_DIR }}/tfplan
+          
+      - name: Terraform Init (for state context)
+        run: terraform init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+
+      - name: Terraform Apply (Using the pre-approved plan file)
+        run: terraform apply -auto-approve tfplan
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        
+      - name: Azure Logout
+        if: always()
+        run: az logout
