@@ -85,14 +85,15 @@ resource "azurerm_policy_set_definition" "initiative_mandatory_tags" {
   })
 
   ######################################################
-  # References (all inherit initiative-level effect)   #
+  # References (all inherit initiative-level effect)   ##
   ######################################################
 
-  policy_definition_reference {
+policy_definition_reference {
     reference_id         = "BusinessOwnerRequired"
+    # This now works because the output is defined in the module:
     policy_definition_id = module.custom_policy["tag-businessowner-required"].policy_definition_id
-    #parameter_values     = jsonencode({ effect = { value = "[parameters('effect')]" } })
-  }
+    #parameter_values    = jsonencode({ effect = { value = "[parameters('effect')]" } })
+}
 
   policy_definition_reference {
     reference_id         = "EnvironmentRequiredAllowed"
