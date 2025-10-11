@@ -20,7 +20,7 @@ provider "azurerm" {
 
 
 resource "azurerm_resource_group" "demo" {
-  name     = "example-resources"
+  name     = "example-storage"
   location = "East Europe"
 }
 
