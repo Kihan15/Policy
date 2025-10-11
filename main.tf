@@ -26,11 +26,11 @@ resource "azurerm_resource_group" "demo" {
 
 ##  Demo of storage account
 resource "azurerm_storage_account" "StorageAccountDemo" {
-  name                     = "satestant000012"
+  name                     = "satestant000013"
   resource_group_name      = azurerm_resource_group.demo.name
   location                 = azurerm_resource_group.demo.location
   account_tier             = "Standard"
-  account_replication_type = "GRS"
+  account_replication_type = "LRS"
 
   tags = {
     video = "azure"
