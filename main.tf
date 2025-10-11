@@ -48,7 +48,7 @@ module "custom_policy" {
 
 
 # ------------------------------------------------------------
-# 2. Creation of initiative from Definitions
+# 2. Creation of initiative from Definitions.
 # ------------------------------------------------------------
 
 resource "azurerm_policy_set_definition" "initiative_mandatory_tags" {
