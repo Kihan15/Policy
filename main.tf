@@ -6,12 +6,6 @@ terraform {
       version = "~> 3.0.2"
     }
   }
-    cloud {
-    organization = "Kihan15"
-    workspaces {
-      name = "policy"
-    }
-  }
 }
 
 provider "azurerm" {
@@ -20,17 +14,17 @@ provider "azurerm" {
 
 
 resource "azurerm_resource_group" "demo" {
-  name     = "example-storage"
+  name     = "example-storage-test2"
   location = "West Europe"
 }
 
 ##  Demo of storage account
 resource "azurerm_storage_account" "StorageAccountDemo" {
-  name                     = "satestant000013"
+  name                     = "satestant2"
   resource_group_name      = azurerm_resource_group.demo.name
   location                 = azurerm_resource_group.demo.location
   account_tier             = "Standard"
-  account_replication_type = "LRS"
+  account_replication_type = "ZRS"
 
   tags = {
     video = "azure"
