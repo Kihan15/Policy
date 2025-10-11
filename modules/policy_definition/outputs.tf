@@ -1,7 +1,5 @@
-# Inside your policy_definition module source code##
-#output "policy_definition_id" {
-  # Change 'azurerm_policy_definition.this' to whatever resource 
-  # name your module uses to define the policy.
- # value       = azurerm_policy_definition.def_policies.id
- # description = "The ID of the created Azure Policy Definition."
-#}
+output "policy_definition_id" {
+  # The resource name defined in modules/policy_definition/main.tf is 'def_policies'
+  value       = azurerm_policy_definition.def_policies.id 
+  description = "The ID of the created Azure Policy Definition."
+}

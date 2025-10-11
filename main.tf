@@ -59,7 +59,7 @@ module "custom_policy" {
   metadata     = jsonencode("${each.value.properties.metadata}")   #format("<<METADATA \n %s \n METADATA", each.value.properties.metadata)
   parameters   = jsonencode("${each.value.properties.parameters}") #format("<<PARAMETERS \n %s \n PARAMETERS", each.value.properties.parameters)
   policy_rule  = jsonencode("${each.value.properties.policyRule}") #format("<<POLICYRULE \n %s \n POLICYRULE", each.value.properties.policyRule)
-  #management_group = var.management_group --- IGNORE ---}
+  #management_group = var.management_group --- IGNORE --}
 }
 
 
