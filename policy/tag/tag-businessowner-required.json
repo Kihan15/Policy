@@ -1,0 +1,51 @@
+{
+  "name": "tag-businessowner-required",
+  "properties": {
+    "displayName": "Require tag: BusinessOwner (Subscriptions + RGs)",
+    "description": "Audits subscriptions and resource groups missing the 'BusinessOwner' tag.",
+    "policyType": "Custom",
+    "mode": "All",
+    "metadata": {
+      "category": "Tags"
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect"
+        },
+        "allowedValues": [
+          "Audit",
+          "Deny",
+          "Disabled"
+        ],
+        "defaultValue": "Audit"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "field": "type",
+                "equals": "Microsoft.Resources/subscriptions"
+              },
+              {
+                "field": "type",
+                "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+              }
+            ]
+          },
+          {
+            "field": "tags['BusinessOwner']",
+            "exists": false
+          }
+        ]
+      },
+      "then": {
+        "effect": "[parameters('effect')]"
+      }
+    }
+  }
+}

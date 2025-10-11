@@ -1,0 +1,63 @@
+{
+  "name": "tag-environment-required-and-allowed-subs-rgs",
+  "properties": {
+    "displayName": "Require tag: Environment with allowed values (Subscriptions + RGs)",
+    "description": "Audits subscriptions and resource groups missing 'Environment' or using a value outside the approved list.",
+    "policyType": "Custom",
+    "mode": "All",
+    "metadata": {
+      "category": "Tags"
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect"
+        },
+        "allowedValues": [
+          "Audit",
+          "Deny",
+          "Disabled"
+        ],
+        "defaultValue": "Audit"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "field": "type",
+                "equals": "Microsoft.Resources/subscriptions"
+              },
+              {
+                "field": "type",
+                "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+              }
+            ]
+          },
+          {
+            "anyOf": [
+              {
+                "field": "tags['Environment']",
+                "exists": false
+              },
+              {
+                "field": "tags['Environment']",
+                "notIn": [
+                  "Prod",
+                  "Stg",
+                  "Dev"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[parameters('effect')]"
+      }
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "name": "tag-businesscriticality-required-and-allowed-subs-rgs",
+  "properties": {
+    "displayName": "Require tag: BusinessCriticality with allowed values (Subscriptions + RGs)",
+    "description": "Audits subscriptions and resource groups missing 'BusinessCriticality' or using a value outside the approved list.",
+    "policyType": "Custom",
+    "mode": "All",
+    "metadata": {
+      "category": "Tags"
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect"
+        },
+        "allowedValues": [
+          "Audit",
+          "Deny",
+          "Disabled"
+        ],
+        "defaultValue": "Audit"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "field": "type",
+                "equals": "Microsoft.Resources/subscriptions"
+              },
+              {
+                "field": "type",
+                "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+              }
+            ]
+          },
+          {
+            "anyOf": [
+              {
+                "field": "tags['BusinessCriticality']",
+                "exists": false
+              },
+              {
+                "field": "tags['BusinessCriticality']",
+                "notIn": [
+                  "non-essential",
+                  "essential",
+                  "critical"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[parameters('effect')]"
+      }
+    }
+  }
+}
