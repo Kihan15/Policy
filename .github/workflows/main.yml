@@ -44,11 +44,10 @@ jobs:
             tenant-id: ${{ secrets.ARM_TENANT_ID }}
             subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
             creds: ${{ secrets.ARM_CLIENT_SECRET }} # The client secret
+            auth-type: 'service-principal'
           
 
-          #subscription-id: 'd2c5b5b1-d8df-4dbd-ac14-d347e7ab31b0'
-          # auth-type: oidc
-          
+          #subscription-id: 'd2c5b5b1-d8df-4dbd-ac14-d347e7ab31b0' 
       - name: Setup Terraform CLI
         uses: hashicorp/setup-terraform@v3
         with:
