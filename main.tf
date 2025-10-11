@@ -16,7 +16,7 @@ provider "azurerm" {
 # 1. Creation of Individual Policy Definitions
 # ------------------------------------------------------------
 
-# Find and read the file data into local Variables.
+# Find and read the file data into local Variables..
 locals {
   policy_files = fileset("./policy/tag", "*.json")
   raw_data     = [for f in local.policy_files : jsondecode(file("./policy/tag/${f}"))]
@@ -138,3 +138,26 @@ resource "azurerm_subscription_policy_assignment" "initiative_mandatory_tags_ass
   #   effect = { value = "Audit" }
   # })
 }
+
+
+
+
+# ------------------------------------------------------------
+# 3. Demo Resources to test the policies  (can be ignored)      
+# ------------------------------------------------------------
+
+# create definitions by looping around all files found under the Monitoring category folder
+module "deploy_resource_diagnostic_setting" {
+  source = "gettek/policy-as-code/azurerm//modules/definition"
+  for_each = toset([
+    for p in fileset(path.module, "../policy/General/*.json") :
+    trimsuffix(basename(p), ".json")
+  ])
+  policy_name         = each.key
+  policy_category     = "General"
+  #management_group_id = data.azurerm_management_group.org.id
+}
+
+
+
+
