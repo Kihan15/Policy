@@ -1,9 +1,9 @@
 terraform {
-  required_version = ">= 1.1.0"
+  required_version = ">= 1.4"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.0.2"
+      version = ">= 4.12"
     }
   }
 }
@@ -16,7 +16,7 @@ provider "azurerm" {
 # 1. Creation of Individual Policy Definitions
 # ------------------------------------------------------------
 
-# Find and read the file data into local Variables.
+# Find and read the file data into local Variables..
 locals {
   policy_files = fileset("./policy/tag", "*.json")
   raw_data     = [for f in local.policy_files : jsondecode(file("./policy/tag/${f}"))]
@@ -138,3 +138,24 @@ resource "azurerm_subscription_policy_assignment" "initiative_mandatory_tags_ass
   #   effect = { value = "Audit" }
   # })
 }
+
+
+
+
+# ------------------------------------------------------------
+# 3. Demo Resources to test the policies  (can be ignored)      
+# ------------------------------------------------------------
+
+# create definitions by looping around all files found under the Monitoring category folder
+module whitelist_regions {
+  source                = "gettek/policy-as-code/azurerm//modules/definition"
+  version = "2.10.1"
+  policy_name           = "whitelist_regions"
+  display_name          = "Allow resources only in whitelisted regions"
+  policy_category       = "General"
+  #management_group_id   = data.azurerm_management_group.org.id
+}
+
+
+
+

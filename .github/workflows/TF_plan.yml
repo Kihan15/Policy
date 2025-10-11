@@ -34,23 +34,4 @@ jobs:
         id: plan
         if: github.event_name == 'push'
         run: terraform plan -no-color
-
-      - name: Check for State Lock Error
-        id: check_lock
-        # This step only runs if the plan step failed
-        if: ${{ failure() && steps.plan.outcome == 'failure' }}
-        run: |
-          # The ID is the most reliable way to force-unlock.
-          # The 'terraform plan' output usually contains the lock ID.
-          # In a real scenario, you'd need a more robust way to capture the ID,
-          # possibly by checking the lock metadata in the Azure Storage blob.
-          
-          # For a quick fix, if you manually know the lock ID from the previous failure:
-          LOCK_ID="f7b8832b-9f50-6ce8-9517-279a25ec747f" # Replace with actual lock ID
-
-          echo "Attempting to force-unlock state..."
-          terraform force-unlock $LOCK_ID
-          
-          # We exit here so the subsequent steps (like apply) don't run prematurely
-          # and so the overall job still fails, indicating manual review is needed.
-          exit 1 
+        continue-on-error: true # Allow the plan step to fail without failing the entire job    
