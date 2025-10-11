@@ -6,6 +6,12 @@ terraform {
       version = "~> 3.0.2"
     }
   }
+    cloud {
+    organization = "Kihan15"
+    workspaces {
+      name = "policy"
+    }
+  }
 }
 
 provider "azurerm" {
