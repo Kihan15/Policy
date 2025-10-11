@@ -1,15 +1,15 @@
-name: "Terraform-Apply-Infra-Release"
+name: "Terraform-Plan-Infra-Plan"
 
 on:
   push:
     branches:
-      - main
+      - FeatureBranch1
 
 jobs:
   terraform:
     name: "Terraform"
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -27,12 +27,3 @@ jobs:
         id: plan
         if: github.event_name == 'push'
         run: terraform plan -no-color
-        continue-on-error: true
-
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
-
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve
