@@ -161,7 +161,7 @@ module whitelist_regions {
 
 
 ############################################################################
-# Deploy Azure Web app service
+# Deploy Azure Web app service with sample website from GitHub Repo
 #############################################################################
 
 
