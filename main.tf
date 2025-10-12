@@ -176,7 +176,7 @@ resource "azurerm_service_plan" "ccoe_plan" {
   name                = "ccoe-appservice-plan"
   location            = azurerm_resource_group.ccoe_rg.location
   resource_group_name = azurerm_resource_group.ccoe_rg.name
-  os_type             = "Linux"
+  os_type             = "windows"
   sku_name            = "B1" # Basic Tier
 }
 
