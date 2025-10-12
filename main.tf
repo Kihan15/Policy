@@ -172,14 +172,12 @@ resource "azurerm_resource_group" "ccoe_rg" {
 }
 
 # App Service Plan
-resource "azurerm_app_service_plan" "ccoe_plan" {
+resource "azurerm_service_plan" "ccoe_plan" {
   name                = "ccoe-appservice-plan"
   location            = azurerm_resource_group.ccoe_rg.location
   resource_group_name = azurerm_resource_group.ccoe_rg.name
-  sku {
-    tier = "Basic"
-    size = "B1"
-  }
+  os_type             = "Windows"
+  sku_name            = "B1" # Basic Tier
 }
 
 # Web App
@@ -187,19 +185,18 @@ resource "azurerm_app_service" "ccoe_webapp" {
   name                = "ccoe-webapp"
   location            = azurerm_resource_group.ccoe_rg.location
   resource_group_name = azurerm_resource_group.ccoe_rg.name
-  app_service_plan_id = azurerm_app_service_plan.ccoe_plan.id
+  app_service_plan_id = azurerm_service_plan.ccoe_plan.id
 
   app_settings = {
     "WEBSITE_RUN_FROM_PACKAGE" = "1"
   }
 }
 
-# GitHub Source Control (public repo)
+# GitHub Source Control (public repo).
 resource "azurerm_app_service_source_control" "github_link" {
   app_id                 = azurerm_app_service.ccoe_webapp.id
   repo_url               = "https://github.com/Kihan15/Policy.git"
   branch                 = "main"
-  manual_integration     = false
-  use_mercurial          = false
+  use_manual_integration = true
 }
   
