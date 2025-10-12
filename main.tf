@@ -199,7 +199,6 @@ resource "azurerm_app_service_source_control" "github_link" {
   app_id                 = azurerm_app_service.ccoe_webapp.id
   repo_url               = "https://github.com/Kihan15/Policy.git"
   branch                 = "main"
-  manual_integration     = false
   use_mercurial          = false
 }
   
