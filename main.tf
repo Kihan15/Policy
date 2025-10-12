@@ -189,20 +189,17 @@ resource "azurerm_app_service" "ccoe_webapp" {
   resource_group_name = azurerm_resource_group.ccoe_rg.name
   app_service_plan_id = azurerm_app_service_plan.ccoe_plan.id
 
-  site_config {
-    scm_type = "GitHub"
-  }
-
   app_settings = {
     "WEBSITE_RUN_FROM_PACKAGE" = "1"
   }
 }
 
-# GitHub Source Control
+# GitHub Source Control (public repo)
 resource "azurerm_app_service_source_control" "github_link" {
   app_id                 = azurerm_app_service.ccoe_webapp.id
   repo_url               = "https://github.com/Kihan15/Policy.git"
   branch                 = "main"
+  manual_integration     = false
+  use_mercurial          = false
 }
-
   
