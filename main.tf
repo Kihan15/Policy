@@ -174,8 +174,8 @@ resource "azurerm_resource_group" "ccoe_rg2" {
 # App Service Plan
 resource "azurerm_service_plan" "ccoe_plan" {
   name                = "ccoe-appservice-plan"
-  location            = azurerm_resource_group.ccoe_rg.location
-  resource_group_name = azurerm_resource_group.ccoe_rg.name
+  location            = azurerm_resource_group.ccoe_rg2.location
+  resource_group_name = azurerm_resource_group.ccoe_rg2.name
   os_type             = "Windows"
   sku_name            = "B1" # Basic Tier
 }
@@ -183,8 +183,8 @@ resource "azurerm_service_plan" "ccoe_plan" {
 # Web App
 resource "azurerm_app_service" "ccoe_webapp" {
   name                = "ccoe-webapp"
-  location            = azurerm_resource_group.ccoe_rg.location
-  resource_group_name = azurerm_resource_group.ccoe_rg.name
+  location            = azurerm_resource_group.ccoe_rg2.location
+  resource_group_name = azurerm_resource_group.ccoe_rg2.name
   app_service_plan_id = azurerm_service_plan.ccoe_plan.id
 
   app_settings = {
