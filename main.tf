@@ -182,17 +182,6 @@ resource "azurerm_app_service_plan" "ccoe_plan" {
   }
 }
 
-# App Service Plan
-resource "azurerm_app_service_plan" "ccoe_plan" {
-  name                = "ccoe-appservice-plan"
-  location            = azurerm_resource_group.ccoe_rg.location
-  resource_group_name = azurerm_resource_group.ccoe_rg.name
-  sku {
-    tier = "Basic"
-    size = "B1"
-  }
-}
-
 # Web App
 resource "azurerm_app_service" "ccoe_webapp" {
   name                = "ccoe-webapp"
