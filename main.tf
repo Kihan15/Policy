@@ -167,7 +167,7 @@ module whitelist_regions {
 
 # Resource Group
 resource "azurerm_resource_group" "ccoe_rg2" {
-  name     = "ccoe-webapp-rg"
+  name     = "ccoe-webapp-rg2"
   location = "West Europe"
 }
 
