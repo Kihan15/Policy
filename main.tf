@@ -173,10 +173,10 @@ resource "azurerm_resource_group" "ccoe_rg2" {
 
 # App Service Plan
 resource "azurerm_service_plan" "ccoe_plan" {
-  name                = "ccoe-appservice-plan"
+  name                = "ccoe-appservice-plan2"
   location            = azurerm_resource_group.ccoe_rg2.location
   resource_group_name = azurerm_resource_group.ccoe_rg2.name
-  os_type             = "Windows"
+  os_type             = "Linux"
   sku_name            = "B1" # Basic Tier
 }
 
