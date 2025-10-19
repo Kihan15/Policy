@@ -283,19 +283,21 @@ resource "azurerm_service_plan" "ccoe_plan3" {
   name                = "ccoe-appservice-plan3"
   location            = azurerm_resource_group.ccoe_rg.location
   resource_group_name = azurerm_resource_group.ccoe_rg.name
-  os_type             = "Linux"
+  os_type             = "Windows"
   sku_name            = "B1"
 }
 
 # Web App (using the integration subnet)
-resource "azurerm_app_service" "ccoe_webapp3" {
+resource "azurerm_windows_web_app" "ccoe_webapp3" {
   name                = "ccoe-webapp3"
   location            = azurerm_resource_group.ccoe_rg.location
   resource_group_name = azurerm_resource_group.ccoe_rg.name
   app_service_plan_id = azurerm_service_plan.ccoe_plan3.id
 
   # VNet Integration for the web app to access resources inside the VNet
-  virtual_network_subnet_id = azurerm_subnet.webapp_integration_subnet.id
+  virtual_network_site {
+    subnet_id= azurerm_subnet.webapp_integration_subnet.id
+  }
 
   site_config {
     # Assuming a simple web deployment (default settings)
@@ -322,7 +324,7 @@ resource "azurerm_storage_account" "ccoe_storage" {
   account_replication_type = "LRS"
   
   # Mandatory to set networking to Private Endpoint only
-  network_aids {
+  network_acl {
     default_action = "Deny"
     bypass         = ["AzureServices"]
   }
