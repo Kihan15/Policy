@@ -367,7 +367,7 @@ resource "azurerm_storage_account" "ccoe_storage" {
   location                      = azurerm_resource_group.ccoe_rg.location
   account_tier                  = "Standard"
   account_replication_type      = "LRS"
-  public_network_access_enabled = false
+  public_network_access_enabled = true
 
   network_rules {
     default_action             = "Deny"
