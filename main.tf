@@ -416,7 +416,7 @@ resource "azurerm_windows_virtual_machine" "ccoe_vm" {
   admin_password = var.vm_admin_password
 
   # Use a Windows 11 image (must be licensed correctly, typically via AVD or specific marketplace offers)
-  # This uses a standard Windows 11 Pro image for demonstration
+  # This uses a standard Windows 11 Pro image for demonstration.
   source_image_reference {
     publisher = "MicrosoftWindowsDesktop"
     offer     = "windows-11"
