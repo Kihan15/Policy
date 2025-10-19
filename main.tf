@@ -188,7 +188,7 @@ resource "azurerm_app_service" "ccoe_webapp" {
   app_service_plan_id = azurerm_service_plan.ccoe_plan.id
 
   app_settings = {
-    "WEBSITE_RUN_FROM_PACKAGE" = "1"
+    
   }
 }
 
