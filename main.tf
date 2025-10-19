@@ -320,19 +320,6 @@ resource "azurerm_windows_web_app" "ccoe_webapp3" {
   }
 }
 
-resource "azurerm_private_endpoint" "webapp_pe" {
-  name                = "ccoe-webapp-pe"
-  location            = azurerm_resource_group.ccoe_rg.location
-  resource_group_name = azurerm_resource_group.ccoe_rg.name
-  subnet_id           = azurerm_subnet.webapp_integration_subnet.id
-
-  private_service_connection {
-    name                           = "ccoe-webapp-connection"
-    private_connection_resource_id = azurerm_windows_web_app.ccoe_webapp3.id
-    subresource_names              = ["sites"]
-    is_manual_connection           = false
-  }
-}
 
 # Private DNS Zone
 resource "azurerm_private_dns_zone" "webapp_dns" {
