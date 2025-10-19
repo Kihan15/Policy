@@ -381,17 +381,49 @@ resource "azurerm_storage_account" "ccoe_storage" {
   }
 }
 
+### Blob Container
+resource "azurerm_storage_container" "ccoe_blob_container" {
+  name                  = "ccoe-blob-container"
+  storage_account_name  = azurerm_storage_account.ccoe_storage.name
+  container_access_type = "private"
+}
+
+### File Share
+resource "azurerm_storage_share" "ccoe_file_share" {
+  name                 = "ccoe-fileshare"
+  storage_account_name = azurerm_storage_account.ccoe_storage.name
+  quota                = 100
+}
+
+
 # Private DNS Zone for Blob Storage
 resource "azurerm_private_dns_zone" "storage_dns_zone" {
   name                = "privatelink.blob.core.windows.net"
   resource_group_name = azurerm_resource_group.ccoe_rg.name
 }
 
-# Link the Private DNS Zone to the Virtual Network
+# File DNS Zone
+resource "azurerm_private_dns_zone" "file_dns_zone" {
+  name                = "privatelink.file.core.windows.net"
+  resource_group_name = azurerm_resource_group.ccoe_rg.name
+}
+
+
+
+# Link Blob the Private DNS Zone to the Virtual Network
 resource "azurerm_private_dns_zone_virtual_network_link" "storage_dns_link" {
   name                  = "ccoe-vnet-link"
   resource_group_name   = azurerm_resource_group.ccoe_rg.name
   private_dns_zone_name = azurerm_private_dns_zone.storage_dns_zone.name
+  virtual_network_id    = azurerm_virtual_network.ccoe_vnet.id
+}
+
+
+# Link File DNS Zone to VNet
+resource "azurerm_private_dns_zone_virtual_network_link" "file_dns_link" {
+  name                  = "file-dns-link"
+  resource_group_name   = azurerm_resource_group.ccoe_rg.name
+  private_dns_zone_name = azurerm_private_dns_zone.file_dns_zone.name
   virtual_network_id    = azurerm_virtual_network.ccoe_vnet.id
 }
 
@@ -412,6 +444,27 @@ resource "azurerm_private_endpoint" "ccoe_storage_pe" {
   private_dns_zone_group {
     name                 = "private-dns-zone-group-blob"
     private_dns_zone_ids = [azurerm_private_dns_zone.storage_dns_zone.id]
+  }
+}
+
+
+# Private Endpoint for File
+resource "azurerm_private_endpoint" "file_pe" {
+  name                = "ccoe-file-pe"
+  location            = azurerm_resource_group.ccoe_rg.location
+  resource_group_name = azurerm_resource_group.ccoe_rg.name
+  subnet_id           = azurerm_subnet.vm_subnet.id
+
+  private_service_connection {
+    name                           = "ccoe-file-psc"
+    private_connection_resource_id = azurerm_storage_account.ccoe_storage.id
+    subresource_names              = ["file"]
+    is_manual_connection           = false
+  }
+
+  private_dns_zone_group {
+    name                 = "file-dns-group"
+    private_dns_zone_ids = [azurerm_private_dns_zone.file_dns_zone.id]
   }
 }
 
