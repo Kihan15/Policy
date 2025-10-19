@@ -405,9 +405,9 @@ resource "azurerm_network_interface_security_group_association" "nic_nsg_associa
 # Windows 11 Virtual Machine
 resource "azurerm_windows_virtual_machine" "ccoe_vm" {
   name                  = "ccoe-windows-vm"
-  location              = azurerm_resource_group.ccoe_rg.location
+  location              = "westeurope"
   resource_group_name   = azurerm_resource_group.ccoe_rg.name
-  size                  = "Standard_D2a_v4"
+  size                  = "Standard_B1s"
   zone                  = "3"
   network_interface_ids = [azurerm_network_interface.vm_nic.id]
 
@@ -420,7 +420,7 @@ resource "azurerm_windows_virtual_machine" "ccoe_vm" {
   source_image_reference {
     publisher = "MicrosoftWindowsDesktop"
     offer     = "windows-11"
-    sku       = "win11-22h2-avd" # Using a recent, common Windows 11 SKU
+    sku       = "win11-22h2-ent" # Using a recent, common Windows 11 SKU
     version   = "latest"
   }
 
