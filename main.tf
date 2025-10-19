@@ -377,7 +377,7 @@ resource "azurerm_storage_account" "ccoe_storage" {
   }
 
   tags = {
-    environment = "Production"
+    costcenter = "CCOE"
   }
 }
 
