@@ -419,7 +419,8 @@ resource "azurerm_windows_virtual_machine" "ccoe_vm" {
   source_image_reference {
     publisher = "MicrosoftWindowsDesktop"
     offer     = "windows-11"
-    sku       = "win11-22h2-pro" # Using a recent, common Windows 11 SKU
+    sku       = "win11-22h2-avd" # Using a recent, common Windows 11 SKU
+    version   = "latest"
   }
 
   os_disk {
