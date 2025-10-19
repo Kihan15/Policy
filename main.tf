@@ -372,7 +372,7 @@ resource "azurerm_storage_account" "ccoe_storage" {
   network_rules {
     default_action             = "Allow"
     bypass                     = ["AzureServices"]
-    virtual_network_subnet_ids = [] # Placeholder, will be overridden by Private Endpoint
+    virtual_network_subnet_ids = [] # Placeholder, will be overridden by Private Endpoint.
     ip_rules                   = []
   }
 
