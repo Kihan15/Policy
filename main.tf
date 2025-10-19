@@ -67,12 +67,12 @@ resource "azurerm_policy_set_definition" "initiative_mandatory_tags" {
   # References (all inherit initiative-level effect)   #
   ######################################################
 
-policy_definition_reference {
-    reference_id         = "BusinessOwnerRequired"
+  policy_definition_reference {
+    reference_id = "BusinessOwnerRequired"
     # This now works because the output is defined in the module:
     policy_definition_id = module.custom_policy["tag-businessowner-required"].policy_definition_id
     #parameter_values    = jsonencode({ effect = { value = "[parameters('effect')]" } })
-}
+  }
 
   policy_definition_reference {
     reference_id         = "EnvironmentRequiredAllowed"
@@ -147,12 +147,12 @@ resource "azurerm_subscription_policy_assignment" "initiative_mandatory_tags_ass
 # ------------------------------------------------------------
 
 # create definitions by looping around all files found under the Monitoring category folder
-module whitelist_regions {
-  source                = "gettek/policy-as-code/azurerm//modules/definition"
-  version = "2.10.1"
-  policy_name           = "whitelist_regions"
-  display_name          = "Allow resources only in whitelisted regions"
-  policy_category       = "General"
+module "whitelist_regions" {
+  source          = "gettek/policy-as-code/azurerm//modules/definition"
+  version         = "2.10.1"
+  policy_name     = "whitelist_regions"
+  display_name    = "Allow resources only in whitelisted regions"
+  policy_category = "General"
   #management_group_id   = data.azurerm_management_group.org.id
 }
 
@@ -176,7 +176,7 @@ resource "azurerm_service_plan" "ccoe_plan" {
   name                = "ccoe-appservice-plan2"
   location            = azurerm_resource_group.ccoe_rg2.location
   resource_group_name = azurerm_resource_group.ccoe_rg2.name
-  os_type             = "Windows" 
+  os_type             = "Windows"
   sku_name            = "B1"
 }
 
@@ -188,14 +188,14 @@ resource "azurerm_app_service" "ccoe_webapp" {
   app_service_plan_id = azurerm_service_plan.ccoe_plan.id
 
   app_settings = {
-    
+
   }
 }
 
-  
 
 
-  
+
+
 ############################################################################
 # 1. NETWORKING: VNet, Subnets, and NSG
 ############################################################################
@@ -235,7 +235,7 @@ resource "azurerm_subnet" "webapp_integration_subnet" {
     service_delegation {
       name = "Microsoft.Web/serverFarms"
     }
-}
+  }
 }
 
 # Network Security Group (NSG) for the VM
@@ -258,16 +258,16 @@ resource "azurerm_network_security_group" "vm_nsg" {
   }
 
 
-# New Rule: Allow Outbound Web Traffic (HTTP/HTTPS) to Any Destination
+  # New Rule: Allow Outbound Web Traffic (HTTP/HTTPS) to Any Destination
   security_rule {
-    name                       = "Allow_Egress_Web"
-    priority                   = 110 # Set a higher priority than the RDP rule
-    direction                  = "Outbound" # <--- Key: Specifies outgoing traffic
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_ranges    = ["80", "443"] # <--- Key: Web ports
-    source_address_prefix      = "*"
+    name                    = "Allow_Egress_Web"
+    priority                = 110        # Set a higher priority than the RDP rule
+    direction               = "Outbound" # <--- Key: Specifies outgoing traffic
+    access                  = "Allow"
+    protocol                = "Tcp"
+    source_port_range       = "*"
+    destination_port_ranges = ["80", "443"] # <--- Key: Web ports
+    source_address_prefix   = "*"
     # The default Azure "AllowInternetOutbound" rule already allows egress to the Internet (*).
     # To specifically allow egress to 'any other subnet' within Azure and the Internet, 
     # using '*' for the destination is the appropriate setting here.
@@ -301,12 +301,12 @@ resource "azurerm_windows_web_app" "ccoe_webapp3" {
   site_config {
     # Assuming a simple web deployment (default settings)
   }
-  
+
   # Deploy a sample site from a public GitHub repo
 
 
   app_settings = {
-    
+
   }
 }
 
@@ -315,11 +315,11 @@ resource "azurerm_windows_web_app" "ccoe_webapp3" {
 ############################################################################
 
 resource "azurerm_storage_account" "ccoe_storage" {
-  name                     = "ccoepltfstorage${substr(replace(uuid(), "-", ""), 0, 8)}"
-  resource_group_name      = azurerm_resource_group.ccoe_rg.name
-  location                 = azurerm_resource_group.ccoe_rg.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
+  name                          = "ccoepltfstorage${substr(replace(uuid(), "-", ""), 0, 8)}"
+  resource_group_name           = azurerm_resource_group.ccoe_rg.name
+  location                      = azurerm_resource_group.ccoe_rg.location
+  account_tier                  = "Standard"
+  account_replication_type      = "LRS"
   public_network_access_enabled = false
 
   network_rules {
@@ -404,16 +404,17 @@ resource "azurerm_network_interface_security_group_association" "nic_nsg_associa
 
 # Windows 11 Virtual Machine
 resource "azurerm_windows_virtual_machine" "ccoe_vm" {
-  name                = "ccoe-windows-vm"
-  location            = azurerm_resource_group.ccoe_rg.location
-  resource_group_name = azurerm_resource_group.ccoe_rg.name
-  size                = "Standard_DS2_v2"
+  name                  = "ccoe-windows-vm"
+  location              = "northeurope"
+  resource_group_name   = azurerm_resource_group.ccoe_rg.name
+  size                  = "Standard_DS2_v2"
+  zone                  = "1"
   network_interface_ids = [azurerm_network_interface.vm_nic.id]
-  
+
   # Credentials for the VM
   admin_username = var.vm_admin_username
   admin_password = var.vm_admin_password
-  
+
   # Use a Windows 11 image (must be licensed correctly, typically via AVD or specific marketplace offers)
   # This uses a standard Windows 11 Pro image for demonstration
   source_image_reference {
