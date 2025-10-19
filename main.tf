@@ -296,11 +296,7 @@ resource "azurerm_windows_web_app" "ccoe_webapp3" {
   resource_group_name = azurerm_resource_group.ccoe_rg.name
   service_plan_id     = azurerm_service_plan.ccoe_plan3.id
 
-  # VNet Integration for the web app to access resources inside the VNet
-resource "azurerm_app_service_virtual_network_swift_connection" "webapp_vnet_connection" {
-  site_id    = azurerm_windows_web_app.ccoe_webapp3.id
-  subnet_id = azurerm_subnet.webapp_integration_subnet.id
-}
+  virtual_network_subnet_id = azurerm_subnet.webapp_integration_subnet.id
 
   site_config {
     # Assuming a simple web deployment (default settings)
@@ -318,23 +314,23 @@ resource "azurerm_app_service_virtual_network_swift_connection" "webapp_vnet_con
 # 3. PRIVATE LINK FOR STORAGE ACCOUNT
 ############################################################################
 
-# Storage Account
 resource "azurerm_storage_account" "ccoe_storage" {
-  name                     = "ccoepltfstorage${substr(replace(uuid(), "-", ""), 0, 8)}" # Random suffix for uniqueness
+  name                     = "ccoepltfstorage${substr(replace(uuid(), "-", ""), 0, 8)}"
   resource_group_name      = azurerm_resource_group.ccoe_rg.name
   location                 = azurerm_resource_group.ccoe_rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-  
-  # FIX: Explicitly disable public network access, removing the unsupported 'network_acl' block
   public_network_access_enabled = false
 
-  # Bypass required for Azure Services like the Web App to use Private Link/Private DNS
-  network_acl {
+  network_rules {
     default_action             = "Deny"
     bypass                     = ["AzureServices"]
     virtual_network_subnet_ids = []
     ip_rules                   = []
+  }
+
+  tags = {
+    environment = "Production"
   }
 }
 
