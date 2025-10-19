@@ -232,8 +232,10 @@ resource "azurerm_subnet" "webapp_integration_subnet" {
   # Delegation is mandatory for Azure Web App VNet Integration
   delegation {
     name = "delegation"
-    service_aids = ["Microsoft.Web/serverFarms"]
-  }
+    service_delegation {
+      name = "Microsoft.Web/serverFarms"
+    }
+}
 }
 
 # Network Security Group (NSG) for the VM
