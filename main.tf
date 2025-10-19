@@ -295,6 +295,7 @@ resource "azurerm_windows_web_app" "ccoe_webapp3" {
   location            = azurerm_resource_group.ccoe_rg.location
   resource_group_name = azurerm_resource_group.ccoe_rg.name
   service_plan_id     = azurerm_service_plan.ccoe_plan3.id
+  public_network_access_enabled = false
 
   virtual_network_subnet_id = azurerm_subnet.webapp_integration_subnet.id
 
