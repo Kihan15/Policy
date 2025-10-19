@@ -405,10 +405,10 @@ resource "azurerm_network_interface_security_group_association" "nic_nsg_associa
 # Windows 11 Virtual Machine
 resource "azurerm_windows_virtual_machine" "ccoe_vm" {
   name                  = "ccoe-windows-vm"
-  location              = "northeurope"
+  location              = azurerm_resource_group.ccoe_rg.location
   resource_group_name   = azurerm_resource_group.ccoe_rg.name
-  size                  = "Standard_DS2_v2"
-  zone                  = "1"
+  size                  = "Standard B1s"
+  zone                  = "3"
   network_interface_ids = [azurerm_network_interface.vm_nic.id]
 
   # Credentials for the VM
