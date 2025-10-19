@@ -407,7 +407,7 @@ resource "azurerm_windows_virtual_machine" "ccoe_vm" {
   name                  = "ccoe-windows-vm"
   location              = azurerm_resource_group.ccoe_rg.location
   resource_group_name   = azurerm_resource_group.ccoe_rg.name
-  size                  = "Standard B1s"
+  size                  = "Standard_D2a_v4"
   zone                  = "3"
   network_interface_ids = [azurerm_network_interface.vm_nic.id]
 
