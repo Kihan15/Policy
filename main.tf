@@ -271,7 +271,7 @@ resource "azurerm_network_security_group" "vm_nsg" {
   security_rule {
     name                    = "Allow_Egress_Web"
     priority                = 110        # Set a higher priority than the RDP rule
-    direction               = "Outbound" # <--- Key: Specifies outgoing traffic
+    direction               = "Outbound" # <--- Key: Specifies outgoing traffic.
     access                  = "Allow"
     protocol                = "Tcp"
     source_port_range       = "*"
