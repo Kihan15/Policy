@@ -212,8 +212,33 @@ resource "azurerm_virtual_network" "ccoe_vnet" {
   address_space       = ["10.0.1.0/24"]
   location            = azurerm_resource_group.ccoe_rg.location
   resource_group_name = azurerm_resource_group.ccoe_rg.name
+
+   # Delegation is mandatory for Azure Web App VNet Integration
+
 }
 
+# Subnet for the vnet
+resource "azurerm_subnet" "one_subnet" {
+  name                 = "one-subnet"
+  resource_group_name  = azurerm_resource_group.ccoe_rg.name
+  virtual_network_name = azurerm_virtual_network.ccoe_vnet.name
+  address_prefixes     = ["10.0.1.0/28"]
+}
+
+resource "azurerm_subnet" "web_subnet" {
+  name                 = "web-subnet"
+  resource_group_name  = azurerm_resource_group.ccoe_rg.name
+  virtual_network_name = azurerm_virtual_network.ccoe_vnet.name
+  address_prefixes     = ["10.0.1.16/28"]
+    delegation {
+    name = "delegation"
+    service_delegation {
+      name = "Microsoft.Web/serverFarms"
+    }
+  }
+}
+
+/*
 # Subnet for the Windows 11 VM
 resource "azurerm_subnet" "vm_subnet" {
   name                 = "vm-subnet"
@@ -247,6 +272,7 @@ resource "azurerm_subnet" "webapp_integration_subnet" {
   }
 }
 
+*/
 # Network Security Group (NSG) for the VM
 resource "azurerm_network_security_group" "vm_nsg" {
   name                = "vm-nsg"
@@ -306,7 +332,7 @@ resource "azurerm_windows_web_app" "ccoe_webapp3" {
   service_plan_id     = azurerm_service_plan.ccoe_plan3.id
   public_network_access_enabled = false
 
-  virtual_network_subnet_id = azurerm_subnet.webapp_integration_subnet.id
+  virtual_network_subnet_id = azurerm_subnet.web_subnet.id
 
   site_config {
     # Assuming a simple web deployment (default settings)
@@ -342,7 +368,7 @@ resource "azurerm_private_endpoint" "webapp_pe" {
   name                = "ccoe-webapp-pe"
   location            = azurerm_resource_group.ccoe_rg.location
   resource_group_name = azurerm_resource_group.ccoe_rg.name
-  subnet_id           = azurerm_subnet.private_endpoint_websubnet.id
+  subnet_id           = azurerm_subnet.one_subnet.id
 
   private_service_connection {
     name                           = "ccoe-webapp-connection"
@@ -432,7 +458,7 @@ resource "azurerm_private_endpoint" "ccoe_storage_pe" {
   name                = "ccoe-storage-pe"
   location            = azurerm_resource_group.ccoe_rg.location
   resource_group_name = azurerm_resource_group.ccoe_rg.name
-  subnet_id           = azurerm_subnet.vm_subnet.id # Placing the PE in the VM subnet
+  subnet_id           = azurerm_subnet.one_subnet.id # Placing the PE in the VM subnet
 
   private_service_connection {
     name                           = "ccoe-storage-psc"
@@ -453,7 +479,7 @@ resource "azurerm_private_endpoint" "file_pe" {
   name                = "ccoe-file-pe"
   location            = azurerm_resource_group.ccoe_rg.location
   resource_group_name = azurerm_resource_group.ccoe_rg.name
-  subnet_id           = azurerm_subnet.vm_subnet.id
+  subnet_id           = azurerm_subnet.one_subnet.id
 
   private_service_connection {
     name                           = "ccoe-file-psc"
@@ -489,7 +515,7 @@ resource "azurerm_network_interface" "vm_nic" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.vm_subnet.id
+    subnet_id                     = azurerm_subnet.one_subnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.vm_ip.id
   }
