@@ -223,6 +223,13 @@ resource "azurerm_subnet" "one_subnet" {
   resource_group_name  = azurerm_resource_group.ccoe_rg.name
   virtual_network_name = azurerm_virtual_network.ccoe_vnet.name
   address_prefixes     = ["10.0.1.0/28"]
+}
+
+resource "azurerm_subnet" "web_subnet" {
+  name                 = "web-subnet"
+  resource_group_name  = azurerm_resource_group.ccoe_rg.name
+  virtual_network_name = azurerm_virtual_network.ccoe_vnet.name
+  address_prefixes     = ["10.0.1.16/28"]
     delegation {
     name = "delegation"
     service_delegation {
@@ -325,7 +332,7 @@ resource "azurerm_windows_web_app" "ccoe_webapp3" {
   service_plan_id     = azurerm_service_plan.ccoe_plan3.id
   public_network_access_enabled = false
 
-  virtual_network_subnet_id = azurerm_subnet.one_subnet.id
+  virtual_network_subnet_id = azurerm_subnet.web_subnet.id
 
   site_config {
     # Assuming a simple web deployment (default settings)
@@ -361,7 +368,7 @@ resource "azurerm_private_endpoint" "webapp_pe" {
   name                = "ccoe-webapp-pe"
   location            = azurerm_resource_group.ccoe_rg.location
   resource_group_name = azurerm_resource_group.ccoe_rg.name
-  subnet_id           = azurerm_subnet.one_subnet.id
+  subnet_id           = azurerm_subnet.web_subnet.id
 
   private_service_connection {
     name                           = "ccoe-webapp-connection"
