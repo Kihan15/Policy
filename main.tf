@@ -368,7 +368,7 @@ resource "azurerm_private_endpoint" "webapp_pe" {
   name                = "ccoe-webapp-pe"
   location            = azurerm_resource_group.ccoe_rg.location
   resource_group_name = azurerm_resource_group.ccoe_rg.name
-  subnet_id           = azurerm_subnet.web_subnet.id
+  subnet_id           = azurerm_subnet.one_subnet.id
 
   private_service_connection {
     name                           = "ccoe-webapp-connection"
